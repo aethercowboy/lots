@@ -37,7 +37,11 @@ namespace lots.BusinessLogic.Services
 
                 foreach (var pair in brackets)
                 {
-                    var result = selectFunc(pair.ToArray());
+                    var result =
+                        pair.Count() == 1
+                        ? pair.First().Id
+                        : selectFunc(pair.ToArray())
+                        ;
 
                     var toCheck = pair.Select(x => x.Id);
 
