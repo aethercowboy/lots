@@ -1,10 +1,9 @@
-﻿using lots.BusinessLogic.Interfaces;
+﻿using lots.BusinessLogic.Extensions;
+using lots.BusinessLogic.Interfaces;
 using lots.Domain.Interfaces;
 using lots.Domain.Models;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 
 namespace lots.BusinessLogic.Services
@@ -18,11 +17,11 @@ namespace lots.BusinessLogic.Services
             _consoleService = consoleService;
         }
 
-        public IEnumerable<MeasuredItem> Rate(string path, int limit, Func<MeasuredItem, MeasuredItem, int> selectFunc)
+        public IEnumerable<MeasuredItem> Rate(IEnumerable<MeasuredItem> items, int limit, Func<MeasuredItem[], int> selectFunc)
         {
-            var items = JsonConvert.DeserializeObject<IEnumerable<MeasuredItem>>(File.ReadAllText(path))
-                .OrderByDescending(x => x.Score)
-                .ToList();
+            var sortedItems = items.OrderByDescending(x => x.Score)
+                .ToList()
+                ;
 
             var itemDict = items.ToDictionary(x => x.Id, x => x);
 
@@ -30,53 +29,78 @@ namespace lots.BusinessLogic.Services
 
             var scores = new Dictionary<int, decimal>();
 
-            foreach (var group in groupedItems)
+            void ProcessBrackets(IEnumerable<MeasuredItem> source)
             {
-                if (scores.Count >= limit) break;
+                var brackets = source.Bracketify().ToList(); // todo - get size of array from selectFunc to determine bracket size
 
-                var count = group.Count();
+                var winners = new List<MeasuredItem>();
 
-                for (var i = 0; i < count; ++i)
+                foreach (var pair in brackets)
                 {
-                    var a = group.ElementAt(i);
+                    var result = selectFunc(pair.ToArray());
 
-                    for (var j = i + 1; j < count; ++j)
+                    var toCheck = pair.Select(x => x.Id);
+
+                    if (!toCheck.Any(x => x == result))
                     {
-                        var b = group.ElementAt(j);
-
-                        var toCheck = new List<int> { a.Id, b.Id };
-
-                        var result = selectFunc(a, b);
-
-                        if (!toCheck.Any(x => x == result))
-                        {
-                            _consoleService.WriteError($"I'm sorry, {result} is not an option.");
-
-                            // redo
-                            --j;
-                            continue;
-                        }
-
+                        _consoleService.WriteError($"I'm sorry, {result} is not an option.");
+                        winners.AddRange(pair);
+                    }
+                    else
+                    {
                         foreach (var c in toCheck)
                         {
                             var item = itemDict[c];
 
-                            AddOrUpdateScore(scores, item, result == c ? 1 : -1);
+                            var score = 0;
+                            if (result == c)
+                            {
+                                winners.Add(item);
+                                score = 1;
+                            }
+                            else
+                            {
+                                score = -1;
+                            }
+
+                            AddOrUpdateScore(scores, item, score);
                         }
                     }
                 }
+
+                if (winners.Count() > 1)
+                {
+                    ProcessBrackets(winners);
+                }
+            }
+
+            foreach (var grouping in groupedItems)
+            {
+                ProcessBrackets(grouping);
             }
 
             var taken = 0;
 
-            foreach (var group in groupedItems) {
-                if (taken >= limit) yield break;
+            foreach (var group in groupedItems)
+            {
+                if (taken >= limit)
+                {
+                    yield break;
+                }
 
                 var ids = group.Select(x => x.Id);
 
-                foreach (var score in scores.Where(x => ids.Contains(x.Key)).OrderByDescending(x => x.Value).Select(x => itemDict[x.Key]))
+                var ranked = scores.Where(x => ids.Contains(x.Key))
+                    .OrderByDescending(x => x.Value)
+                    .Select(x => new RatedItem(itemDict[x.Key], x.Value))
+                    ;
+
+                foreach (var score in ranked)
                 {
-                    if (taken >= limit) yield break;
+                    if (taken >= limit)
+                    {
+                        yield break;
+                    }
 
                     yield return score;
                     ++taken;

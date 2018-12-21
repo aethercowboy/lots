@@ -5,7 +5,10 @@ using lots.Domain.Models;
 using lots.Domain.Services;
 using McMaster.Extensions.CommandLineUtils;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace lots
@@ -30,7 +33,9 @@ namespace lots
 
             var ratingService = serviceProvider.GetService<IRatingService>();
 
-            var scores = ratingService.Rate(Path, Limit, Prompt)
+            var items = JsonConvert.DeserializeObject<IEnumerable<MeasuredItem>>(File.ReadAllText(Path));
+
+            var scores = ratingService.Rate(items, Limit, Prompt)
                 .ToList();
 
             ConsoleService.WriteMessage("The Results:");
@@ -40,23 +45,26 @@ namespace lots
             }
         }
 
-        private int Prompt(MeasuredItem a, MeasuredItem b)
+        private int Prompt(params MeasuredItem[] measuredItems)
         {
             ConsoleService.WriteMessage("Select One:");
-            ConsoleService.WriteMessage(a.ToString());
-            ConsoleService.WriteMessage(b.ToString());
+            foreach (var m in measuredItems)
+            {
+                ConsoleService.WriteMessage(m.ToString());
+            }
+
             ConsoleService.Write("> ");
             var response = ConsoleService.ReadLine();
 
             if (int.TryParse(response, out var val))
             {
-                if (a.Id == val || b.Id == val)
+                if (measuredItems.Any(x => x.Id == val))
                     return val;
             }
 
             ConsoleService.WriteError($"I'm sorry, {response} is not an option.");
 
-            return Prompt(a, b);
+            return Prompt(measuredItems);
         }
 
         private IServiceProvider InitializeServiceCollection()

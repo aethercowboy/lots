@@ -3,11 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.168
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "lots", "lots\lots.csproj", "{1D098E4E-0B59-43A6-87E6-E725D58DD8C8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "lots", "lots\lots.csproj", "{1D098E4E-0B59-43A6-87E6-E725D58DD8C8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "lots.Domain", "lots.Domain\lots.Domain.csproj", "{6C8FBE82-EF04-43BB-9DBA-73C41AA5F2B0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "lots.Domain", "lots.Domain\lots.Domain.csproj", "{6C8FBE82-EF04-43BB-9DBA-73C41AA5F2B0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "lots.BusinessLogic", "lots.BusinessLogic\lots.BusinessLogic.csproj", "{D165FF69-D17E-45F0-98E6-59A36926DC1A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "lots.BusinessLogic", "lots.BusinessLogic\lots.BusinessLogic.csproj", "{D165FF69-D17E-45F0-98E6-59A36926DC1A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "lots.Tests", "lots.Tests\lots.Tests.csproj", "{E5C7819A-1C7C-4FCA-901E-7D0F04E03DA5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{D165FF69-D17E-45F0-98E6-59A36926DC1A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D165FF69-D17E-45F0-98E6-59A36926DC1A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D165FF69-D17E-45F0-98E6-59A36926DC1A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E5C7819A-1C7C-4FCA-901E-7D0F04E03DA5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E5C7819A-1C7C-4FCA-901E-7D0F04E03DA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E5C7819A-1C7C-4FCA-901E-7D0F04E03DA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E5C7819A-1C7C-4FCA-901E-7D0F04E03DA5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

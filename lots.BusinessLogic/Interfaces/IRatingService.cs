@@ -6,6 +6,6 @@ namespace lots.BusinessLogic.Interfaces
 {
     public interface IRatingService
     {
-        IEnumerable<MeasuredItem> Rate(string path, int limit, Func<MeasuredItem, MeasuredItem, int> selectFunc);
+        IEnumerable<MeasuredItem> Rate(IEnumerable<MeasuredItem> items, int limit, Func<MeasuredItem[], int> selectFunc);
     }
 }
