@@ -9,7 +9,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "lots.Domain", "lots.Domain\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "lots.BusinessLogic", "lots.BusinessLogic\lots.BusinessLogic.csproj", "{D165FF69-D17E-45F0-98E6-59A36926DC1A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "lots.Tests", "lots.Tests\lots.Tests.csproj", "{E5C7819A-1C7C-4FCA-901E-7D0F04E03DA5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "lots.Tests", "lots.Tests\lots.Tests.csproj", "{E5C7819A-1C7C-4FCA-901E-7D0F04E03DA5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utilities", "Utilities", "{A845D534-4652-4580-89F6-0EE5497BE06F}"
+	ProjectSection(SolutionItems) = preProject
+		lots.bat = lots.bat
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

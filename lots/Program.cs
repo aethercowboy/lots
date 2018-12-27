@@ -16,10 +16,10 @@ namespace lots
     public class Program
     {
         [Option(ShortName = "p", Description = "Path to the resource.")]
-        public string Path { get; }
+        public string Path { get; } = "input.json";
 
         [Option(ShortName = "l", Description = "Limit the number of results")]
-        public int Limit { get; }
+        public int? Limit { get; }
 
         public static void Main(string[] args) => CommandLineApplication.Execute<Program>(args);
 
@@ -32,7 +32,7 @@ namespace lots
             ConsoleService = serviceProvider.GetService<IConsoleService>();
 
             var ratingService = serviceProvider.GetService<IRatingService>();
-
+           
             var items = JsonConvert.DeserializeObject<IEnumerable<MeasuredItem>>(File.ReadAllText(Path));
 
             var scores = ratingService.Rate(items, Limit, Prompt)

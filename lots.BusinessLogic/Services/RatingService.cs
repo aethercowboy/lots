@@ -17,8 +17,10 @@ namespace lots.BusinessLogic.Services
             _consoleService = consoleService;
         }
 
-        public IEnumerable<MeasuredItem> Rate(IEnumerable<MeasuredItem> items, int limit, Func<MeasuredItem[], int> selectFunc)
+        public IEnumerable<MeasuredItem> Rate(IEnumerable<MeasuredItem> items, int? limit, Func<MeasuredItem[], int> selectFunc)
         {
+            var limit2 = limit.GetValueOrDefault(items.Count());
+
             var sortedItems = items.OrderByDescending(x => x.Score)
                 .ToList()
                 ;
@@ -88,7 +90,7 @@ namespace lots.BusinessLogic.Services
             {
                 var check = items.OrderByDescending(x => x.Score)
                     .ThenBy(x => x.Rating)
-                    .Take(limit + 1)
+                    .Take(limit2 + 1)
                     ;
 
                 var ties = check.GroupBy(x => new { x.Score, x.Rating }).Where(x => x.Count() > 1)
