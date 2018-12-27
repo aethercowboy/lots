@@ -94,9 +94,12 @@ namespace lots.BusinessLogic.Services
 
                 var ids = group.Select(x => x.Id);
 
-                var ranked = scores.Where(x => ids.Contains(x.Key))
-                    .OrderByDescending(x => x.Value)
-                    .Select(x => new RatedItem(itemDict[x.Key], x.Value))
+                //var ranked = scores.Where(x => ids.Contains(x.Key))
+                //    .OrderByDescending(x => x.Value)
+                //    .Select(x => itemDict[x.Key])
+                //    ;
+                var ranked = items.OrderByDescending(x => x.Score)
+                    .ThenByDescending(x => x.Rating)
                     ;
 
                 foreach (var score in ranked)
@@ -116,10 +119,12 @@ namespace lots.BusinessLogic.Services
         {
             if (dict.ContainsKey(item.Id))
             {
+                item.Rating += score;
                 dict[item.Id] += score;
             }
             else
             {
+                item.Rating += score;
                 dict.Add(item.Id, score);
             }
         }
