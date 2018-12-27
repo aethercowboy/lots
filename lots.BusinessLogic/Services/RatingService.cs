@@ -27,11 +27,10 @@ namespace lots.BusinessLogic.Services
 
             var groupedItems = items.GroupBy(x => x.Score);
 
-            var scores = new Dictionary<int, decimal>();
-
             void ProcessBrackets(IEnumerable<MeasuredItem> source)
             {
-                var brackets = source.Bracketify().ToList(); // todo - get size of array from selectFunc to determine bracket size
+                var brackets = source.Bracketify()
+                    .ToList(); // todo - get size of array from selectFunc to determine bracket size
 
                 var winners = new List<MeasuredItem>();
 
@@ -67,7 +66,7 @@ namespace lots.BusinessLogic.Services
                                 score = -1;
                             }
 
-                            AddOrUpdateScore(scores, item, score);
+                            AddOrUpdateScore(item, score);
                         }
                     }
                 }
@@ -83,6 +82,26 @@ namespace lots.BusinessLogic.Services
                 ProcessBrackets(grouping);
             }
 
+            var haveTies = true;
+
+            while (haveTies)
+            {
+                var check = items.OrderByDescending(x => x.Score)
+                    .ThenBy(x => x.Rating)
+                    .Take(limit + 1)
+                    ;
+
+                var ties = check.GroupBy(x => new { x.Score, x.Rating }).Where(x => x.Count() > 1)
+                    .ToList();
+
+                haveTies = ties.Any();
+
+                foreach (var t in ties)
+                {
+                    ProcessBrackets(t);
+                }
+            }
+
             var taken = 0;
 
             foreach (var group in groupedItems)
@@ -94,10 +113,6 @@ namespace lots.BusinessLogic.Services
 
                 var ids = group.Select(x => x.Id);
 
-                //var ranked = scores.Where(x => ids.Contains(x.Key))
-                //    .OrderByDescending(x => x.Value)
-                //    .Select(x => itemDict[x.Key])
-                //    ;
                 var ranked = items.OrderByDescending(x => x.Score)
                     .ThenByDescending(x => x.Rating)
                     ;
@@ -115,18 +130,9 @@ namespace lots.BusinessLogic.Services
             }
         }
 
-        private void AddOrUpdateScore(Dictionary<int, decimal> dict, MeasuredItem item, decimal score)
+        private void AddOrUpdateScore(MeasuredItem item, decimal score)
         {
-            if (dict.ContainsKey(item.Id))
-            {
-                item.Rating += score;
-                dict[item.Id] += score;
-            }
-            else
-            {
-                item.Rating += score;
-                dict.Add(item.Id, score);
-            }
+            item.Rating += score;
         }
     }
 }

@@ -23,6 +23,13 @@ namespace lots.Tests.BusinessLogic.Services
                 .Id;
         }
 
+        private int RateByName(params MeasuredItem[] items)
+        {
+            return items.OrderBy(x => x.Name)
+                .First()
+                .Id;
+        }
+
         [Fact]
         public void Rate_ByLengthSimple()
         {
@@ -76,7 +83,7 @@ namespace lots.Tests.BusinessLogic.Services
 
             var rater = _mocker.CreateInstance<RatingService>();
 
-            var ratings = rater.Rate(data, data.Count, (items) => items.OrderBy(x => x).First().Id)
+            var ratings = rater.Rate(data, data.Count, RateByName)
                 .ToList();
 
             Assert.Equal("A", ratings[0].Name);
