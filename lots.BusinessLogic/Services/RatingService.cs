@@ -38,18 +38,21 @@ namespace lots.BusinessLogic.Services
 
                 foreach (var pair in brackets)
                 {
+                    var orderedPair = pair.OrderBy(x => x.Id)
+                        .ToList();
+
                     var result =
-                        pair.Count() == 1
-                        ? pair.First().Id
-                        : selectFunc(pair.ToArray())
+                        orderedPair.Count() == 1
+                        ? orderedPair.First().Id
+                        : selectFunc(orderedPair.ToArray())
                         ;
 
-                    var toCheck = pair.Select(x => x.Id);
+                    var toCheck = orderedPair.Select(x => x.Id);
 
                     if (!toCheck.Any(x => x == result))
                     {
                         _consoleService.WriteError($"I'm sorry, {result} is not an option.");
-                        winners.AddRange(pair);
+                        winners.AddRange(orderedPair);
                     }
                     else
                     {
@@ -57,15 +60,14 @@ namespace lots.BusinessLogic.Services
                         {
                             var item = itemDict[c];
 
-                            var score = 0;
+                            var score = toCheck.Count() - 1; 
                             if (result == c)
                             {
                                 winners.Add(item);
-                                score = 1;
                             }
                             else
                             {
-                                score = -1;
+                                score = 0;
                             }
 
                             AddOrUpdateScore(item, score);

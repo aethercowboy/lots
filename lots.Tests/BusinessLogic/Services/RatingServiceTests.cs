@@ -93,5 +93,25 @@ namespace lots.Tests.BusinessLogic.Services
             Assert.Equal("E", ratings[4].Name);
             Assert.Equal("F", ratings[5].Name);
         }
+
+        [Fact]
+        public void Rate_ByAlphabeticalOrder_Simple()
+        {
+            var data = new List<MeasuredItem>
+            {
+                new MeasuredItem{ Name = "A", Description = "A", Id = 1, Score = 0},
+                new MeasuredItem{ Name = "B", Description = "B", Id = 2, Score = 0},
+                new MeasuredItem{ Name = "C", Description = "C", Id = 3, Score = 0},
+            };
+
+            var rater = _mocker.CreateInstance<RatingService>();
+
+            var ratings = rater.Rate(data, data.Count, RateByName)
+                .ToList();
+
+            Assert.Equal("A", ratings[0].Name);
+            Assert.Equal("B", ratings[1].Name);
+            Assert.Equal("C", ratings[2].Name);
+        }
     }
 }
